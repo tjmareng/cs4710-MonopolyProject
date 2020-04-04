@@ -25,7 +25,15 @@ abstract sig Building {
 
 one sig Board{
 	players: some Player,
-	properties: some Property
+	spaces: some Location
+}
+
+fact allPlayersOnBoard{
+	all p:Player | one b:Board | p in b.players
+}
+
+fact allSpacesOnBoard{
+	all l:Location | one b:Board | l in b.spaces
 }
 
 sig Token {}
