@@ -15,13 +15,14 @@ abstract sig Player {
 }
 
 abstract sig Location{
-	Price: one Price
+	price: one Price
+} {
+
 }
 
 abstract sig Building {
-	price: Price
+	price: one Price
 }
-
 
 one sig Board{
 	players: some Player,
@@ -36,7 +37,14 @@ fact allSpacesOnBoard{
 	all l:Location | one b:Board | l in b.spaces
 }
 
-sig Token {}
+fact locationPriceUnique{
+	all l, l':Location | l.price = l'.price implies l = l'
+}
+
+
+sig Token {}{
+     one this.~token
+}
 sig Money {}
 sig Price {}
 
@@ -45,16 +53,16 @@ sig Property extends Location{
 	hotels: lone Hotel
 }
 
-sig Utilities extends Location{}
-sig Railroad extends Location{}
+sig Utilities extends Location{}{
+	one ~price
+}
+sig Railroad extends Location{}{
+	one ~price
+}
 
 
 sig Hotel extends Building {}
 sig House extends Building {}
-
-
-
-
 
 
 
