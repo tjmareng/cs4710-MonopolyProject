@@ -16,8 +16,6 @@ abstract sig Player {
 
 abstract sig Location{
 	price: one Price
-} {
-
 }
 
 abstract sig Building {
@@ -59,7 +57,6 @@ sig Utilities extends Location{}{
 sig Railroad extends Location{}{
 	one ~price
 }
-
 
 sig Hotel extends Building {}
 sig House extends Building {}
