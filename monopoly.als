@@ -19,7 +19,6 @@ some sig Player {
 	ownedProperties: one OwnedProperties,
 	ownedUtilities: one OwnedUtilities,
 	ownedRailroads: one OwnedRailroads,
-  
 }
 
 // Tokens are unique to each player
@@ -48,9 +47,9 @@ sig Hotel extends Building {}
 sig House extends Building {}
 
 // Utilities and Railroads are Locations with a Price
-sig OwnedUtilities { properties: set Utilities }
+sig OwnedUtilities { utilities: set Utilities }
 sig Utilities extends Location{}
-sig OwnedRailroads { properties: set Railroad }
+sig OwnedRailroads { railroads: set Railroad }
 sig Railroad extends Location{}
 
 // Die sig contains values to be rolled
@@ -109,21 +108,21 @@ fact allSpacesOnBoard{
 // ----------------------- FACTS ----------------------- //
 
 // ----------------------- FUNCTIONS ----------------------- //
-//fun allOwnedLocations[b: Board] : set Location {
-//	b.players.(ownedRailroads + ownedUtilities + ownedProperties)
-//}
-//pred ownRailroad[b: Board, r: Railroad] {
-//	r in allOwnedLocations[b]
-//}
-//pred ownUtility[b: Board, u: Utilities] {
-//	u in allOwnedLocations[b]
-//}
-//pred ownProperty[b: Board, p: Property] {
-//	p in allOwnedLocations[b]
-//}
+fun allOwnedLocations[b: Board] : set Location {
+	b.players.ownedProperties.properties + b.players.ownedUtilities.utilities + b.players.ownedRailroads.railroads
+}
+pred ownRailroad[b: Board, r: Railroad] {
+	r in allOwnedLocations[b]
+}
+pred ownUtility[b: Board, u: Utilities] {
+	u in allOwnedLocations[b]
+}
+pred ownProperty[b: Board, p: Property] {
+	p in allOwnedLocations[b]
+}
 //run ownRailroad
 //run ownUtility
-//run ownProperty
+run ownProperty
 
 //fun lookUpHouses[p: Player, pr: Property] : set House {
 //	p.houses[pr]
@@ -143,10 +142,9 @@ fact everyHotelMapped {
 // ----------------------- ASSERTIONS ----------------------- //
 // ----------------------- ASSERTIONS ----------------------- //
 
-pred show (b: Board, p: Player){
+pred show (b: Board, o: OwnedProperties){
 	#b.players > 1
-	#p.ownedUtilities >= 1
-	#p.ownedProperties >= 1
-	#p.ownedRailroads >= 1
+	#o.properties > 1
+	
 }
 run show
