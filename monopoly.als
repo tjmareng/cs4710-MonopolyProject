@@ -13,14 +13,13 @@ one sig Board{
 }
 
 // Player sig
-sig Player {	
+some sig Player {	
 	token: one Token, 
 	money: set Money,
-	ownedProperties: set Property,
-	ownedUtilities: set Utilities,
-	ownedRailroads: set Railroad,
-	houses: Property -> House ,
-	hotels: Property -> Hotel  
+	ownedProperties: one OwnedProperties,
+	ownedUtilities: one OwnedUtilities,
+	ownedRailroads: one OwnedRailroads,
+  
 }
 
 // Tokens are unique to each player
@@ -36,6 +35,11 @@ sig Money {}
 sig Price {}{ one this.~price }
 
 // Property is a Location which can have Houses or up to one Hotel
+sig OwnedProperties { 
+	properties: set Property,
+ 	houses: Property->House,
+	hotels: Property->Hotel
+}
 sig Property extends Location{
 	houses: set House,
 	hotels: lone Hotel
@@ -44,7 +48,9 @@ sig Hotel extends Building {}
 sig House extends Building {}
 
 // Utilities and Railroads are Locations with a Price
+sig OwnedUtilities { properties: set Utilities }
 sig Utilities extends Location{}
+sig OwnedRailroads { properties: set Railroad }
 sig Railroad extends Location{}
 
 // Die sig contains values to be rolled
@@ -81,9 +87,14 @@ fact oneBalance {
 	all p: Player | one p.money 
 }
 
+// Players only have one money balance
+fact oneSetofProperties { 
+	all p: Player | one p.ownedProperties
+}
+
 // A Player cannot have a Hotel without 4 Houses
 fact needFourHouses { 
-	all p: Player | #p.houses < 4 implies #p.hotels = 0
+//	all p: Player | #p.houses < 4 implies #p.hotels = 0
 }
 
 // Players are on the Board
@@ -98,34 +109,44 @@ fact allSpacesOnBoard{
 // ----------------------- FACTS ----------------------- //
 
 // ----------------------- FUNCTIONS ----------------------- //
-fun allOwnedLocations[b: Board] : set Location {
-	b.players.(ownedRailroads + ownedUtilities + ownedProperties)
-}
-pred ownRailroad[b: Board, r: Railroad] {
-	r in allOwnedLocations[b]
-}
-pred ownUtility[b: Board, u: Utilities] {
-	u in allOwnedLocations[b]
-}
-pred ownProperty[b: Board, p: Property] {
-	p in allOwnedLocations[b]
-}
+//fun allOwnedLocations[b: Board] : set Location {
+//	b.players.(ownedRailroads + ownedUtilities + ownedProperties)
+//}
+//pred ownRailroad[b: Board, r: Railroad] {
+//	r in allOwnedLocations[b]
+//}
+//pred ownUtility[b: Board, u: Utilities] {
+//	u in allOwnedLocations[b]
+//}
+//pred ownProperty[b: Board, p: Property] {
+//	p in allOwnedLocations[b]
+//}
 //run ownRailroad
 //run ownUtility
-run ownProperty
+//run ownProperty
 
-//fun lookUpHouses[p: Player, h: House] : set Player {
-//	p.houses[h]
+//fun lookUpHouses[p: Player, pr: Property] : set House {
+//	p.houses[pr]
 //}
-//fun lookUpHotel[p: Player,  pr: Property] : set Hotel {
+fact everyHouseMapped {
+//	all p: Player, pr: Property | some p.houses implies some lookUpHouses[p, pr]
+}
+
+//fun lookUpHotels[p: Player, pr: Property] : set Hotel {
 //	p.hotels[pr]
 //}
+fact everyHotelMapped {
+//	all p: Player, pr: Property | some p.hotels implies some lookUpHotels[p, pr]
+}
 // ----------------------- FUNCTIONS ----------------------- //
 
 // ----------------------- ASSERTIONS ----------------------- //
 // ----------------------- ASSERTIONS ----------------------- //
 
-pred show (b: Board){
+pred show (b: Board, p: Player){
 	#b.players > 1
+	#p.ownedUtilities >= 1
+	#p.ownedProperties >= 1
+	#p.ownedRailroads >= 1
 }
 run show
