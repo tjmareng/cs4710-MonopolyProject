@@ -122,24 +122,44 @@ pred ownProperty[b: Board, p: Property] {
 }
 //run ownRailroad
 //run ownUtility
-run ownProperty
+//run ownProperty
 
-//fun lookUpHouses[p: Player, pr: Property] : set House {
-//	p.houses[pr]
-//}
+fun lookUpHouses[p: Player, pr: Property] : set House {
+	p.ownedProperties.houses[pr]
+}
 fact everyHouseMapped {
-//	all p: Player, pr: Property | some p.houses implies some lookUpHouses[p, pr]
+	all p: Player, pr: Property | some p.ownedProperties.houses implies some lookUpHouses[p, pr]
 }
 
-//fun lookUpHotels[p: Player, pr: Property] : set Hotel {
-//	p.hotels[pr]
-//}
+fun lookUpHotels[p: Player, pr: Property] : set Hotel {
+	p.ownedProperties.hotels[pr]
+}
 fact everyHotelMapped {
-//	all p: Player, pr: Property | some p.hotels implies some lookUpHotels[p, pr]
+	all p: Player, pr: Property | some p.ownedProperties.hotels implies some lookUpHotels[p, pr]
 }
 // ----------------------- FUNCTIONS ----------------------- //
 
 // ----------------------- ASSERTIONS ----------------------- //
+//Checks that there is in fact only one board
+assert oneBoard {
+	
+}
+
+//Checks that all players have a token
+assert playerHasAToken {
+	
+}
+
+//Checks that all players start with one money stack
+assert playerHasOneMoneyStack {
+	
+}
+
+//Checks that all players start with no locations
+assert PlayerHasNoLocations {
+	
+}
+
 // ----------------------- ASSERTIONS ----------------------- //
 
 pred show (b: Board, o: OwnedProperties){
