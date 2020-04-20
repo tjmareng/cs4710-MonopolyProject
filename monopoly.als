@@ -191,9 +191,9 @@ fact everyHotelMapped {
 // ----------------------- FUNCTIONS ----------------------- //
 
 // ----------------------- ASSERTIONS ----------------------- //
-//Checks that there is in fact only one board
-assert oneBoard {
-	
+// Preforming a second acquireProperty has no effect
+assert twoIdenticalAcquire {
+//	all m, m', m'': Memory, a: Address, d: Data | write [m, m', a, d] and write [m', m'', a, d] => m' = m''
 }
 
 //Checks that all players have a token
@@ -214,6 +214,27 @@ assert PlayerHasNoLocations {
 //check PlayerHasNoLocations
 
 // ----------------------- ASSERTIONS ----------------------- //
+
+// ----------------------- DYNAMIC ----------------------- //
+pred acquireProperty[p, p': Player, pr: Property] {
+	p'.ownedProperties.properties = p.ownedProperties.properties ++ pr
+}
+// If a property is bought, check that the relation is updated
+assert checkAcquireProperty {
+	all p, p': Player, pr: Property | !(pr in p.ownedProperties.properties) implies acquireProperty[p, p', pr] => pr in p'.ownedProperties.properties
+}
+//check checkAcquireProperty 
+
+pred sellProperty[p, p': Player, pr: Property] {
+	#p.ownedProperties.properties > 0
+	p'.ownedProperties.properties = p.ownedProperties.properties - pr
+}
+// If a property is sold, check that the relation is updated
+assert checkSellingProperty {
+	all p, p': Player, pr: Property | pr in p.ownedProperties.properties implies sellProperty[p, p', pr] => !(pr in p'.ownedProperties.properties)
+}
+//check checkSellingProperty 
+// ----------------------- DYNAMIC ----------------------- //
 
 pred show (b: Board, o: OwnedProperties){
 	#b.players > 1
