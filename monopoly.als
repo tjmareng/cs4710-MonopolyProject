@@ -26,7 +26,7 @@ sig Token {}{ one this.~token }
 
 // Abstract sig representing a purchasable signature
 abstract sig Purchasable{ price: one Price }
-abstract sig Location extends Purchasable{}
+abstract sig Location extends Purchasable {}
 abstract sig Building extends Purchasable {}
 sig Money {}
 
@@ -67,10 +67,19 @@ pred init (p: Player) {
 	no p.ownedRailroads.railroads
 }
 
+fact boardOwnedStacks {
+	all b: Board | #b.players.ownedProperties = #b.players
+	all b: Board | #b.players.ownedRailroads = #b.players
+	all b: Board | #b.players.ownedUtilities = #b.players
+}
+
 // If two Players have the same Properties, then they are the same Player
 fact uniqueProperties { 
 	no disj p, p': Player | p.ownedProperties = p'.ownedProperties
 	no disj p, p': Player | p.ownedProperties.properties = p'.ownedProperties.properties
+}
+fact oneOwnedProperty { 
+	all p: Player | one p.ownedProperties
 }
 
 // If two Players have the same Utilities, then they are the same Player
@@ -78,11 +87,17 @@ fact uniqueUtilities {
 	no disj p, p': Player | p.ownedUtilities = p'.ownedUtilities
 //	no disj p, p': Player | p.ownedUtilities.utilities = p'.ownedUtilities.utilities
 }
+fact oneOwnedUtility { 
+	all p: Player | one p.ownedUtilities
+}
 
 // If two Players have the same Railroads, then they are the same Player
 fact uniqueRailroads { 
 	no disj p, p': Player | p.ownedRailroads = p'.ownedRailroads
 //	no disj p, p': Player | p.ownedRailroads.railroads = p'.ownedRailroads.railroads 
+}
+fact oneOwnedRailroad { 
+	all p: Player | one p.ownedRailroads
 }
 
 // If two Players have the same Money, then they are the same Player
@@ -102,7 +117,7 @@ fact oneSetofProperties {
 
 // A Player cannot have a Hotel without 4 Houses
 fact needFourHouses { 
-//	all p: Player | #p.houses < 4 implies #p.hotels = 0
+	all p: Player | #p.ownedProperties.houses < 4 implies #p.ownedProperties.hotels = 0
 }
 
 // Players are on the Board
@@ -150,6 +165,14 @@ fact oneStackButManyOwnedRail {
 }
 fact oneStackButManyOwnedUtil {
 	all p: Player | some p.ownedUtilities implies some playerUtilities[p] && one p.ownedUtilities
+}
+fact onePlayerOwnsUtility {
+	//all p, p': Player, u: Utilities | u in playerUtilities[p] implies !(u in playerUtilities[p'])
+}
+fact playerOwnsAtMost {
+	all p: Player |  #playerUtilities[p] >= 0 && #playerUtilities[p]  <= 2
+	all p: Player |  #playerRailroads[p] >= 0 && #playerRailroads[p]  <= 4
+	all p: Player |  #playerProperties[p] >= 0 //&& #playerProperties[p]  <= 22
 }
 
 fun lookUpHouses[p: Player, pr: Property] : set House {
