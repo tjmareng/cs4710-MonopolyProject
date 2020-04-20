@@ -61,6 +61,12 @@ sig Railroad extends Location{}
 // ----------------------- SIGNATURES ----------------------- //
 
 // ----------------------- FACTS ----------------------- //
+pred init (p: Player) {
+	no p.ownedProperties.properties
+	no p.ownedUtilities.utilities
+	no p.ownedRailroads.railroads
+}
+
 // If two Players have the same Properties, then they are the same Player
 fact uniqueProperties { 
 	no disj p, p': Player | p.ownedProperties = p'.ownedProperties
@@ -157,8 +163,10 @@ assert playerHasOneMoneyStack {
 
 //Checks that all players start with no locations
 assert PlayerHasNoLocations {
-	
+	all p: Player, pr: Property | 
+			init[p] => !(pr in p.ownedProperties.properties)
 }
+//check PlayerHasNoLocations
 
 // ----------------------- ASSERTIONS ----------------------- //
 
