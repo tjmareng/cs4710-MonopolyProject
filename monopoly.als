@@ -193,8 +193,9 @@ fact everyHotelMapped {
 // ----------------------- ASSERTIONS ----------------------- //
 // Preforming a second acquireProperty has no effect
 assert twoIdenticalAcquire {
-//	all m, m', m'': Memory, a: Address, d: Data | write [m, m', a, d] and write [m', m'', a, d] => m' = m''
+	all p, p', p'': Player, pr: Property | acquireProperty [p, p', pr] and acquireProperty [p', p'', pr] => p' = p''
 }
+//check twoIdenticalAcquire
 
 //Checks that all players have a token
 assert playerHasAToken {
