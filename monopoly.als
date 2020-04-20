@@ -132,6 +132,8 @@ fact allSpacesOnBoard{
 // ----------------------- FACTS ----------------------- //
 
 // ----------------------- FUNCTIONS ----------------------- //
+
+// Returns all of the owned Locations on the board
 fun allOwnedLocations[b: Board] : set Location {
 	b.players.ownedProperties.properties + b.players.ownedUtilities.utilities + b.players.ownedRailroads.railroads
 }
@@ -148,33 +150,61 @@ pred ownProperty[b: Board, p: Property] {
 //run ownUtility
 //run ownProperty
 
+// Return all of a player's owned properties 
 fun playerProperties[p: Player] : set Property {
 	p.ownedProperties.properties
 }
+// Return all of a player's owned railroads 
 fun playerRailroads[p: Player] : set Railroad {
 	p.ownedRailroads.railroads
 }
+// Return all of a player's owned utilities 
 fun playerUtilities[p: Player] : set Utilities {
 	p.ownedUtilities.utilities
 }
+// Ensures that if a player owns properties, they appear in the owned properties and that that player only
+// has one set of owned properties
 fact oneStackButManyOwnedProp {
 	all p: Player | some p.ownedProperties.properties implies some playerProperties[p] && one p.ownedProperties
 }
+// Ensures that if a player owns railroads, they appear in the owned railroads and that that player only
+// has one set of owned railroads
 fact oneStackButManyOwnedRail {
 	all p: Player | some p.ownedRailroads.railroads implies some playerRailroads[p] && one p.ownedRailroads
 }
+// Ensures that if a player owns utilities, they appear in the owned utilities and that that player only
+// has one set of owned utilities
 fact oneStackButManyOwnedUtil {
 	all p: Player | some p.ownedUtilities implies some playerUtilities[p] && one p.ownedUtilities
 }
+// Multiple players cannot own the same utility
 fact onePlayerOwnsUtility {
-	//all p, p': Player, u: Utilities | u in playerUtilities[p] implies !(u in playerUtilities[p'])
+//	all p, p': Player, u: Utilities | u in playerUtilities[p] implies !(u in playerUtilities[p'])
 }
+
+// Returns all properties on the board
+fun propertiesOnBoard[b: Board] : set Property {
+	b.players.ownedProperties.properties
+}
+// Returns all railroads on the board
+fun railroadsOnBoard[b: Board] : set Railroad {
+	b.players.ownedRailroads.railroads
+}
+// Returns all utilities on the board
+fun utilitiesOnBoard[b: Board] : set Utilities {
+	b.players.ownedUtilities.utilities
+}
+// Board space restraints 
 fact playerOwnsAtMost {
 	all p: Player |  #playerUtilities[p] >= 0 && #playerUtilities[p]  <= 2
 	all p: Player |  #playerRailroads[p] >= 0 && #playerRailroads[p]  <= 4
-	all p: Player |  #playerProperties[p] >= 0 //&& #playerProperties[p]  <= 22
+	all p: Player |  #playerProperties[p] >= 0 // && #playerProperties[p]  <= 22
+	all b: Board |  #propertiesOnBoard[b] >= 0 //&& #propertiesOnBoard[b]  <= 22
+	all b: Board |  #railroadsOnBoard[b] >= 0 && #railroadsOnBoard[b]  <= 4
+	all b: Board |  #utilitiesOnBoard[b] >= 0 && #utilitiesOnBoard[b]  <= 2
 }
 
+// Return houses at a property
 fun lookUpHouses[p: Player, pr: Property] : set House {
 	p.ownedProperties.houses[pr]
 }
@@ -182,6 +212,7 @@ fact everyHouseMapped {
 	all p: Player, pr: Property | some p.ownedProperties.houses implies some lookUpHouses[p, pr]
 }
 
+// Return the hotel at a property or empty set if there is not a hotel
 fun lookUpHotels[p: Player, pr: Property] : set Hotel {
 	p.ownedProperties.hotels[pr]
 }
