@@ -70,16 +70,19 @@ pred init (p: Player) {
 // If two Players have the same Properties, then they are the same Player
 fact uniqueProperties { 
 	no disj p, p': Player | p.ownedProperties = p'.ownedProperties
+	no disj p, p': Player | p.ownedProperties.properties = p'.ownedProperties.properties
 }
 
 // If two Players have the same Utilities, then they are the same Player
 fact uniqueUtilities { 
 	no disj p, p': Player | p.ownedUtilities = p'.ownedUtilities
+//	no disj p, p': Player | p.ownedUtilities.utilities = p'.ownedUtilities.utilities
 }
 
 // If two Players have the same Railroads, then they are the same Player
 fact uniqueRailroads { 
 	no disj p, p': Player | p.ownedRailroads = p'.ownedRailroads
+//	no disj p, p': Player | p.ownedRailroads.railroads = p'.ownedRailroads.railroads 
 }
 
 // If two Players have the same Money, then they are the same Player
@@ -129,6 +132,25 @@ pred ownProperty[b: Board, p: Property] {
 //run ownRailroad
 //run ownUtility
 //run ownProperty
+
+fun playerProperties[p: Player] : set Property {
+	p.ownedProperties.properties
+}
+fun playerRailroads[p: Player] : set Railroad {
+	p.ownedRailroads.railroads
+}
+fun playerUtilities[p: Player] : set Utilities {
+	p.ownedUtilities.utilities
+}
+fact oneStackButManyOwnedProp {
+	all p: Player | some p.ownedProperties.properties implies some playerProperties[p] && one p.ownedProperties
+}
+fact oneStackButManyOwnedRail {
+	all p: Player | some p.ownedRailroads.railroads implies some playerRailroads[p] && one p.ownedRailroads
+}
+fact oneStackButManyOwnedUtil {
+	all p: Player | some p.ownedUtilities implies some playerUtilities[p] && one p.ownedUtilities
+}
 
 fun lookUpHouses[p: Player, pr: Property] : set House {
 	p.ownedProperties.houses[pr]
