@@ -206,6 +206,16 @@ assert playerHasOneMoneyStack {
 	
 }
 
+//Confirm that all owned locations are actual locations on the board
+assert allOwnedLocationsOnBoard {
+	one b:Board | allOwnedLocations[b] in b. spaces
+}
+
+//Confirm that all properties are in ownedlocations
+assert playersPropertiesAreInOwned{
+	one b: Board | all p: Player | (playerProperties[p] + playerRailroads[p] + playerUtilities[p]) in allOwnedLocations[b] 
+}
+
 //Checks that all players start with no locations
 assert PlayerHasNoLocations {
 	all p: Player, pr: Property | 
