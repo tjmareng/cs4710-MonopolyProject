@@ -265,7 +265,10 @@ pred acquireProperty[p, p': Player, pr: Property] {
 assert checkAcquireProperty {
 	all p, p': Player, pr: Property | !(pr in p.ownedProperties.properties) implies acquireProperty[p, p', pr] => pr in p'.ownedProperties.properties
 }
-//check checkAcquireProperty 
+//check checkAcquireProperty for 22
+//run acquiringProperties {
+//	some p, p': Player, pr: Property | acquireProperty[p, p', pr]
+//} for 3 but 8 Player
 
 pred sellProperty[p, p': Player, pr: Property] {
 	#p.ownedProperties.properties > 0
@@ -276,6 +279,24 @@ assert checkSellingProperty {
 	all p, p': Player, pr: Property | pr in p.ownedProperties.properties implies sellProperty[p, p', pr] => !(pr in p'.ownedProperties.properties)
 }
 //check checkSellingProperty 
+
+pred acquireRailroad[p, p': Player, r: Railroad] {
+	p'.ownedRailroads.railroads = p.ownedRailroads.railroads ++ r
+}
+// If a property is bought, check that the relation is updated
+assert checkAcquireRailroad {
+	all p, p': Player, r: Railroad | !(r in p.ownedRailroads.railroads) implies acquireRailroad[p, p', r] => r in p'.ownedRailroads.railroads
+}
+//check checkAcquireRailroad
+
+pred acquireUtility[p, p': Player, u: Utilities] {
+	p'.ownedUtilities.utilities = p.ownedUtilities.utilities ++ u
+}
+// If a property is bought, check that the relation is updated
+assert checkAcquireUtility {
+	all p, p': Player, u: Utilities | !(u in p.ownedUtilities.utilities) implies acquireUtility[p, p', u] => u in p'.ownedUtilities.utilities
+}
+//check checkAcquireRailroad
 // ----------------------- DYNAMIC ----------------------- //
 
 pred show (b: Board, o: OwnedProperties){
