@@ -319,6 +319,48 @@ assert checkSellingUtility {
 	all p, p': Player, u: Utilities | u in p.ownedUtilities.utilities implies sellUtility[p, p', u] => !(u in p'.ownedUtilities.utilities)
 }
 //check checkSellingUtility for 1 but 2 Utilities
+//------
+//------
+pred acquireHouse[p, p': Player, pr: Property, h: House] {
+	#p.ownedProperties.houses < 4
+	p'.ownedProperties.houses = p.ownedProperties.houses ++ pr->h
+}
+// If a house is bought, check that the relation is updated
+assert checkAcquireHouse {
+	all p, p': Player, pr: Property, h: House | acquireHouse[p, p', pr, h] => one p'.ownedProperties.houses[pr]
+}
+//check checkAcquireHouse
+
+pred sellHouse[p, p': Player, pr: Property, h: House] {
+	#p.ownedProperties.houses > 0
+	p'.ownedProperties.houses = p.ownedProperties.houses - pr->h
+}
+// If a house is sold, check that the relation is updated
+assert checkSellHouse {
+	all p, p': Player, pr: Property, h: House | sellHouse[p, p', pr, h] => no p'.ownedProperties.houses[pr]
+}
+//check checkSellHouse
+//------
+//------
+pred acquireHotel [p, p': Player, pr: Property, h: Hotel] {
+	#p.ownedProperties.houses = 4
+	p'.ownedProperties.hotels = p.ownedProperties.hotels ++ pr->h
+}
+// If a Hotel is bought, check that the relation is updated
+assert checkAcquireHotel {
+	all p, p': Player, pr: Property, h: Hotel | acquireHotel[p, p', pr, h] => one p'.ownedProperties.hotels[pr]
+}
+//check checkAcquireHotel
+
+pred sellHotel[p, p': Player, pr: Property, h: Hotel] {
+	#p.ownedProperties.hotels > 0
+	p'.ownedProperties.hotels = p.ownedProperties.hotels - pr->h
+}
+// If a house is sold, check that the relation is updated
+assert checkSellHotel {
+	all p, p': Player, pr: Property, h: Hotel | sellHotel[p, p', pr, h] => no p'.ownedProperties.hotels[pr]
+}
+//check checkSellHotel
 // ----------------------- DYNAMIC ----------------------- //
 
 pred show (b: Board, o: OwnedProperties){
